@@ -1,0 +1,49 @@
+SET SERVEROUTPUT ON SIZE UNLIMITED;
+SET LINESIZE 200;
+SET PAGESIZE 100;
+
+_______________________________________________________
+Procedimiento almacenado
+
+CREATE OR REPLACE PROCEDURE ACTUALIZAR_GRUPO_INGLES(
+	P_NUEVO_GRUPO IN VARCHAR2
+) AS
+BEGIN
+	--Estos son los comandos de la actualización masiva
+  UPDATE TABLA_PRUEBA
+  SET CODIGO_INGLES = P_NUEVO_GRUPO
+  WHERE NUM_IDENTIFICACION IN (SELECT NUM_IDENTIFICACION FROM TEMP_INGLES);
+	--Confirmamos la transaccion
+  COMMIT;
+  DBMS_OUTPUT.PUT_LINE('!ACTUALIZACIÓN MASIVA AL GRUPO: ' ||  P_NUEVO_GRUPO || ' COMPLETADA!');
+EXCEPTION
+	--Sistema de seguridad por si algo falla
+	WHEN OTHERS THEN
+	ROLLBACK;
+	DBMS_OUTPUT.PUT_LINE('OCURRIO UN ERROR EN LA ACTUALIZACIÓN: ' || SQLERRM);
+END;
+
+
+
+BEGIN
+	ACTUALIZAR_GRUPO_INGLES('INGLES NIVEL 3');
+END;
+
+______________________________________________________________
+
+Borrador
+
+BEGIN
+	--Estos son los comandos de la actualización masiva
+  UPDATE TABLA_PRUEBA
+  SET CODIGO_INGLES = 'INGLES NIVEL 2'
+  WHERE NUM_IDENTIFICACION IN (SELECT NUM_IDENTIFICACION FROM TEMP_INGLES);
+	--Confirmamos la transaccion
+  COMMIT;
+  DBMS_OUTPUT.PUT_LINE('PRUEBA EXITOSA');
+EXCEPTION
+	--Sistema de seguridad por si algo falla
+	WHEN OTHERS THEN
+	ROLLBACK;
+	DBMS_OUTPUT.PUT_LINE('OCURRIO UN ERROR EN LA ACTUALIZACIÓN: ' ||SQLERRM);
+END;
